@@ -1,0 +1,82 @@
+discovery:
+  categories:
+    - "https://www.clutch.co/it-services/crm"
+    - "https://www.clutch.co/it-services/erp"
+  daily_target: 10
+  actor_id: "saswave/clutch-company-scraper"
+
+qualification:
+  exclude_competitors:
+    - "Elara"
+    - "Convverge"
+    - "DaytaTech.ai"
+  exclude_type: "MSP"
+
+enrichment:
+  decision_maker_titles:
+    - "Partnerships"
+    - "Business Development"
+    - "Operations"
+    - "Founder"
+    - "CEO"
+
+hunter_limits:
+  max_searches_per_month: 80
+  max_verifications_total: 2000
+  verifications_used: 337
+
+outreach:
+  sender_address: "outreach@curateanalytics.ca"
+  sender_line: "I lead business development at Curate Analytics"
+  require_subject_line: true
+  require_manual_approval: true
+  smtp_host: "smtp.titan.email"
+  smtp_port: 465
+  imap_host: "imap.titan.email"
+  imap_port: 993
+
+follow_up:
+  days_before_first_followup: 4
+  days_before_second_followup: 8
+  max_follow_ups: 2
+
+opt_out:
+  poll_interval_minutes: 30
+  keyword_triggers:
+    - "unsubscribe"
+    - "remove me"
+    - "stop emailing"
+    - "opt out"
+    - "not interested"
+    - "take me off"
+
+eval_nurse:
+  enabled: true
+  max_retry_attempts: 2
+  qualify_min_reasoning_length: 15
+  qualify_max_retries: 1
+  enrich_min_confidence: 50
+  verify_max_retries: 0
+  draft_min_body_length: 200
+  draft_max_body_length: 3000
+  draft_max_retries: 2
+  draft_placeholder_markers:
+    - "{company}"
+    - "{name}"
+    - "{contact_name}"
+    - "[INSERT"
+    - "[COMPANY]"
+    - "[NAME]"
+    - "TODO"
+    - "Lorem ipsum"
+  followup_min_body_length: 100
+  followup_max_body_length: 2500
+  followup_max_retries: 2
+  discover_placeholder_values:
+    - "n/a"
+    - "tbd"
+    - "-"
+    - "none"
+    - "unknown"
+  alert_recipient: ""
+  digest_subject_prefix: "[Outreach QA]"
