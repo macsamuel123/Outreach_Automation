@@ -35,7 +35,15 @@ def run_enrich(
     targets = rows[:limit] if limit else rows
 
     month_key = run_id[:7]
-    usage = db_store.get_hunter_quota(engine, month_key) if not dry_run else {}
+    usage_dict = db_store.get_hunter_quota(engine, month_key) if not dry_run else {}
+
+    # Convert dict to object for HunterClient compatibility
+    class UsageObj:
+        def __init__(self, d):
+            for k, v in d.items():
+                setattr(self, k, v)
+
+    usage = UsageObj(usage_dict) if usage_dict else UsageObj({'month_key': month_key, 'searches_used': 0, 'verifications_used': 0})
     client = HunterClient(
         settings.hunter_api_key,
         usage,
