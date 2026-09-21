@@ -20,21 +20,14 @@ jobs:
         run: docker build -t outreach-pipeline:latest .
 
       - name: Run pipeline
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          APIFY_API_TOKEN: ${{ secrets.APIFY_API_TOKEN }}
-          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
         run: |
           docker run --rm \
-            -e DATABASE_URL="$DATABASE_URL" \
-            -e APIFY_API_TOKEN="$APIFY_API_TOKEN" \
-            -e HUNTER_API_KEY="$HUNTER_API_KEY" \
-            -e DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY" \
-            -e EMAIL_ADDRESS="$EMAIL_ADDRESS" \
-            -e EMAIL_APP_PASSWORD="$EMAIL_APP_PASSWORD" \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            -e APIFY_API_TOKEN="${{ secrets.APIFY_API_TOKEN }}" \
+            -e HUNTER_API_KEY="${{ secrets.HUNTER_API_KEY }}" \
+            -e DEEPSEEK_API_KEY="${{ secrets.DEEPSEEK_API_KEY }}" \
+            -e EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}" \
+            -e EMAIL_APP_PASSWORD="${{ secrets.EMAIL_APP_PASSWORD }}" \
             outreach-pipeline:latest
 
       - name: Log pipeline result
