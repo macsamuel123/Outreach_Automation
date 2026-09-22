@@ -42,7 +42,7 @@ def run_verify(
             for k, v in d.items():
                 setattr(self, k, v)
 
-    usage = UsageObj(usage_dict) if usage_dict else UsageObj({'month_key': month_key, 'searches_used': 0, 'verifications_used': 0})
+    usage = UsageObj(usage_dict) if usage_dict is not None else UsageObj({'month_key': month_key, 'searches_used': 0, 'verifications_used': 0})
     client = HunterClient(
         settings.hunter_api_key,
         usage,
@@ -164,7 +164,7 @@ def run_verify(
         else:
             invalid += 1
 
-    if not dry_run and usage_dict:
+    if not dry_run and usage_dict is not None:
         db_store.increment_hunter_quota(engine, month_key, searches=usage_dict.get('searches_used', 0), verifications=usage_dict.get('verifications_used', 0))
 
     return VerifyResult(
