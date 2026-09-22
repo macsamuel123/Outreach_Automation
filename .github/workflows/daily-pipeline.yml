@@ -14,7 +14,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Debug - verify code checkout
-        run: grep -n "usage_dict.get" outreach_agent/stages/enrich.py || echo "FAILED: usage_dict not found"
+        run: |
+          grep -n "usage_dict.get" outreach_agent/stages/enrich.py || echo "FAILED: usage_dict not found"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
