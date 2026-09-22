@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
-from outreach_agent import audit, config, constants, excel_store, eval_layer, nurse
+from outreach_agent import audit, config, constants, db_store, eval_layer, nurse
 from outreach_agent.clients.deepseek import DeepSeekClient
 from outreach_agent.clients.http_base import RetriableAPIError
 from outreach_agent.clients.mailer import send_email
@@ -31,12 +31,12 @@ def run_followup(
     """Followup stage: send follow-ups for non-responsive leads."""
 
     run_id = run_id or audit.new_run_id()
-    wb = excel_store.load()
-    ws_tracker = wb[constants.SHEET_PARTNER_TRACKER]
-    ws_suppression = wb[constants.SHEET_SUPPRESSION_LIST]
+    engine = db_store.get_engine()
+    if not dry_run:
+        db_store.ensure_db(engine)
 
-    suppression_rows = excel_store.read_rows(ws_suppression, constants.SUPPRESSION_LIST_COLUMNS)
-    rows = excel_store.read_rows(engine, constants.PARTNER_TRACKER_COLUMNS)
+    suppression_rows = db_store.load_suppression_list(engine)
+    rows = db_store.load_partners(engine, status="*")
 
     require_approval = cfg.get("outreach", {}).get("require_manual_approval", True)
     smtp_host = cfg.get("outreach", {}).get("smtp_host", "smtp.gmail.com")

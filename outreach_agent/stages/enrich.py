@@ -174,8 +174,8 @@ def run_enrich(
         )
         enriched += 1
 
-    if not dry_run and usage:
-        db_store.increment_hunter_quota(engine, month_key, searches=usage.get('searches_used', 0), verifications=usage.get('verifications_used', 0))
+    if not dry_run and usage_dict:
+        db_store.increment_hunter_quota(engine, month_key, searches=usage_dict.get('searches_used', 0), verifications=usage_dict.get('verifications_used', 0))
 
     return EnrichResult(
         processed=processed,

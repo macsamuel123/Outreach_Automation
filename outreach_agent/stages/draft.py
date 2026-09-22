@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from outreach_agent import audit, config, constants, excel_store, eval_layer, nurse
+from outreach_agent import audit, config, constants, db_store, eval_layer, nurse
 from outreach_agent.clients.deepseek import DeepSeekClient
 from outreach_agent.clients.http_base import NonRetriableAPIError, RetriableAPIError
 
@@ -38,11 +38,12 @@ def run_draft(
     """Draft stage: generate personalized emails."""
 
     run_id = run_id or audit.new_run_id()
-    wb = excel_store.load()
-    ws_tracker = wb[constants.SHEET_PARTNER_TRACKER]
+    engine = db_store.get_engine()
+    if not dry_run:
+        db_store.ensure_db(engine)
 
-    rows = excel_store.read_rows(engine, constants.PARTNER_TRACKER_COLUMNS)
-    targets = [r for r in rows if r.get("status") == constants.PARTNER_STATUS_VERIFIED][:limit]
+    rows = db_store.load_partners(engine, status=constants.PARTNER_STATUS_VERIFIED)
+    targets = rows[:limit] if limit else rows
 
     client = DeepSeekClient(settings.deepseek_api_key)
     require_subject_line = cfg.get("outreach", {}).get("require_subject_line", True)
