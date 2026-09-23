@@ -13,26 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug - verify code checkout
+      - name: Set up Docker
         run: |
-          grep -n "usage_dict.get" outreach_agent/stages/enrich.py || echo "FAILED: usage_dict not found"
-          grep -n "is not None" outreach_agent/stages/enrich.py | head -1
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Test pipeline without Docker
-        run: |
-          pip install -q -r requirements.txt
-          python -m outreach_agent.cli discover --dry-run --limit 1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+          docker system prune -af
+          docker buildx prune -af
 
       - name: Build Docker image
-        run: docker build --no-cache -t outreach-pipeline:latest .
+        run: docker build --no-cache --progress=plain -t outreach-pipeline:latest .
 
       - name: Run pipeline
         run: |
