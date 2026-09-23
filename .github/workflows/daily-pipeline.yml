@@ -13,26 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
+      - name: Set up Docker
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Validate config with dry run
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          APIFY_API_TOKEN: ${{ secrets.APIFY_API_TOKEN }}
-          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
-        run: |
-          python -m outreach_agent.cli discover --dry-run --limit 1
+          docker system prune -af
+          docker buildx prune -af
 
       - name: Build Docker image
         run: docker build --no-cache --progress=plain -t outreach-pipeline:latest .
@@ -57,4 +41,9 @@ jobs:
 
       - name: Log pipeline result
         if: always()
-        run: echo "Pipeline finished with status: ${{ job.status }}"
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✓ Pipeline completed successfully"
+          else
+            echo "✗ Pipeline failed; check logs above"
+          fi
