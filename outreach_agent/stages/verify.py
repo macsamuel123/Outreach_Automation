@@ -34,7 +34,7 @@ def run_verify(
     targets = rows[:limit] if limit else rows
 
     month_key = run_id[:7]
-    usage_dict = db_store.get_hunter_quota(engine, month_key) if not dry_run else {}
+    usage_dict = db_store.get_hunter_quota(engine, month_key) if not dry_run else None
 
     # Convert dict to object for HunterClient compatibility
     class UsageObj:
@@ -42,7 +42,13 @@ def run_verify(
             for k, v in d.items():
                 setattr(self, k, v)
 
-    usage = UsageObj(usage_dict) if usage_dict is not None else UsageObj({'month_key': month_key, 'searches_used': 0, 'verifications_used': 0})
+    # Ensure usage_dict has all required keys with defaults
+    if usage_dict is None:
+        usage_dict = {}
+    usage_dict.setdefault('month_key', month_key)
+    usage_dict.setdefault('searches_used', 0)
+    usage_dict.setdefault('verifications_used', 0)
+    usage = UsageObj(usage_dict)
     client = HunterClient(
         settings.hunter_api_key,
         usage,
