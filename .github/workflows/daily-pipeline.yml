@@ -1,5 +1,5 @@
 name: Daily Prospecting Pipeline
-
+# Force GitHub sync
 on:
   schedule:
     - cron: '0 8 * * *'  # 8 AM UTC daily
